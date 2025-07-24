@@ -490,7 +490,13 @@ class SafeProduct extends DefaultSafe
     public function getPdfFiles()
     {
         // Return PDF files associated with the product
-        return $this->data['pdf_files'] ?? [];
+        $pdfFiles = [];
+        if (isset($this->data['pdf_files'])) {
+            foreach ($this->data['pdf_files'] as $pdfData) {
+                $pdfFiles[] = new SafePdfFile($pdfData);
+            }
+        }
+        return $pdfFiles;
     }
     
     public function hasBundleProducts()
