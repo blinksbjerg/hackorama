@@ -36,6 +36,14 @@ class Router
             return ['type' => 'landing_page', 'id' => $matches[1]];
         }
         
+        // Blog pages
+        if ($path === '/blog') {
+            return ['type' => 'blog'];
+        }
+        if (preg_match('/^\/blog\/(\d+)/', $path, $matches)) {
+            return ['type' => 'blog_post', 'id' => $matches[1]];
+        }
+        
         // Basket
         if ($path === '/basket') {
             return ['type' => 'basket'];

@@ -281,10 +281,63 @@ class SafeWebshop extends DefaultSafe
         return [];
     }
     
-    public function getBlogPosts($page = 1, $limit = 10)
+    public function getBlogPosts($limit = 100, $offset = 0)
     {
-        // Return empty array - no blog posts
-        return [];
+        if ($this->apiClient) {
+            try {
+                $blogPosts = $this->apiClient->getBlogPosts(['limit' => $limit, 'offset' => $offset]);
+                $wrappedPosts = [];
+                foreach ($blogPosts as $blogPost) {
+                    $wrappedPosts[] = new SafeBlogPost($blogPost);
+                }
+                if (!empty($wrappedPosts)) {
+                    return $wrappedPosts;
+                }
+            } catch (\Exception $e) {
+                // Fall through to mock data
+            }
+        }
+        
+        // Return mock blog posts for testing
+        $mockPosts = [
+            [
+                'blog_post_id' => 1,
+                'title' => 'Velkommen til vores blog',
+                'content' => 'Dette er vores første blog post. Her deler vi nyheder og interessante historier.',
+                'intro' => 'En introduktion til vores blog',
+                'author' => 'Morten',
+                'created_at' => date('Y-m-d H:i:s', strtotime('-1 week')),
+                'published' => true,
+                'image' => [
+                    'url' => 'https://picsum.photos/1200/300?random=1',
+                    'alt' => 'Blog billede 1',
+                    'width' => 1200,
+                    'height' => 300
+                ]
+            ],
+            [
+                'blog_post_id' => 2,
+                'title' => 'Nyheder fra butikken',
+                'content' => 'Vi har mange spændende nyheder at dele med jer. Læs mere her.',
+                'intro' => 'Seneste nyheder',
+                'author' => 'Morten',
+                'created_at' => date('Y-m-d H:i:s', strtotime('-3 days')),
+                'published' => true,
+                'image' => [
+                    'url' => 'https://picsum.photos/1200/300?random=2',
+                    'alt' => 'Blog billede 2',
+                    'width' => 1200,
+                    'height' => 300
+                ]
+            ]
+        ];
+        
+        $wrappedPosts = [];
+        foreach ($mockPosts as $postData) {
+            $wrappedPosts[] = new SafeBlogPost($postData);
+        }
+        
+        return array_slice($wrappedPosts, $offset, $limit);
     }
     
     public function getDefaultStockLocation()

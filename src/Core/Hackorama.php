@@ -83,6 +83,12 @@ class Hackorama
             case 'landing_page_slug':
                 $this->showLandingPageBySlug($route['slug']);
                 break;
+            case 'blog':
+                $this->showBlog();
+                break;
+            case 'blog_post':
+                $this->showBlogPost($route['id']);
+                break;
             case 'basket':
                 $this->showBasket();
                 break;
@@ -113,6 +119,9 @@ class Hackorama
                 break;
             case 'shipping':
                 $this->showShipping();
+                break;
+            case 'payment':
+                $this->showPayment();
                 break;
             default:
                 $this->show404();
@@ -282,6 +291,20 @@ class Hackorama
                 }
             }
             
+            // Handle checkout proceed button
+            if (isset($_POST['next'])) {
+                // Check if basket has items
+                $basket = $this->basketManager->getBasket();
+                if (empty($basket)) {
+                    header('Location: /basket?empty=1');
+                    exit;
+                }
+                
+                // Proceed to address page
+                header('Location: /address');
+                exit;
+            }
+            
             // Handle voucher code
             if (isset($_POST['voucher'])) {
                 $voucherCode = trim($_POST['voucher']);
@@ -328,6 +351,8 @@ class Hackorama
         $data['get'] = $_GET;
         $data['get']['s'] = $_GET['s'] ?? '';
         $data['get']['wrong_voucher'] = isset($_GET['wrong_voucher']) ? true : false;
+        $data['get']['empty'] = isset($_GET['empty']) ? true : false;
+        $data['get']['order_complete'] = isset($_GET['order_complete']) ? true : false;
         $data['get']['search'] = $_GET['search'] ?? '';
         
         // Get current voucher code
@@ -405,6 +430,17 @@ class Hackorama
                 $data['products'] = [];
             }
         }
+        
+        // Add missing template variables
+        $data['pages'] = [];
+        $data['landing_pages'] = [];
+        $data['categories'] = [];
+        $data['blog_posts'] = [];
+        $data['category'] = null;
+        $data['landing_page'] = null;
+        $data['inc'] = null;
+        $data['pager'] = null;
+        $data['data'] = ['placeholder' => 'Søg efter produkter...'];
         
         // Render template
         $this->template->assign($data);
@@ -626,6 +662,71 @@ class Hackorama
             exit;
         }
         
+        // Handle address form submission
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (isset($_POST['next']) || isset($_POST['skip_next'])) {
+                // Store address data in session (simplified for demo)
+                $_SESSION['order_address'] = $_POST;
+                
+                // If skip_next, go directly to payment, otherwise to shipping
+                if (isset($_POST['skip_next'])) {
+                    header('Location: /payment');
+                } else {
+                    header('Location: /shipping');
+                }
+                exit;
+            }
+        }
+        
+        // Initialize session order data with empty values to prevent template warnings
+        $data['session_order'] = [
+            'exists' => false,
+            'missing_address' => false,
+            'name' => '',
+            'company_name' => '',
+            'vat_number' => '',
+            'ean_number' => '',
+            'address' => '',
+            'zipcode' => '',
+            'city' => '',
+            'country_id' => 45, // Default to Denmark
+            'email' => $data['customer'] ? $data['customer']->getEmail() : '',
+            'phone' => '',
+            'comments' => '',
+            'join_mailinglist' => (object)['value' => ''],
+            'newsletter' => false,
+            'delivery_to_same' => true,
+            'delivery_name' => '',
+            'delivery_company_name' => '',
+            'delivery_address' => '',
+            'delivery_zipcode' => '',
+            'delivery_city' => '',
+            'delivery_country_id' => 45
+        ];
+        
+        // Add missing GET variables for template
+        $data['get']['exists'] = false;
+        $data['get']['missing_address'] = false;
+        
+        // Add missing template variables
+        $data['join_mailinglist'] = (object)['value' => ''];
+        $data['session_del'] = [
+            'name' => '',
+            'company_name' => '',
+            'address' => '',
+            'zipcode' => '',
+            'city' => '',
+            'country_id' => 45
+        ];
+        
+        // Add newsletter settings to prevent warnings
+        if (!isset($data['settings']['gdpr'])) {
+            $data['settings']['gdpr'] = [];
+        }
+        if (!isset($data['settings']['gdpr']['newsletter'])) {
+            $data['settings']['gdpr']['newsletter'] = '';
+        }
+        
         $this->template->assign($data);
         $this->template->display('address.html');
     }
@@ -634,12 +735,67 @@ class Hackorama
     {
         $data = $this->getCommonTemplateData();
         
+        // Handle shipping form submission
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (isset($_POST['next'])) {
+                // Store shipping data in session
+                $_SESSION['order_shipping'] = $_POST;
+                
+                // Check if we should skip approval step
+                if (isset($_POST['skip_approve']) || $_GET['skip_approve'] ?? false) {
+                    header('Location: /payment');
+                } else {
+                    header('Location: /approval'); // Create approval page later if needed
+                }
+                exit;
+            }
+        }
+        
         // Get shipping methods
         $shippingMethods = $this->apiClient->getShippingMethods();
         $data['shipping_methods'] = $this->wrapObjects($shippingMethods, 'Shipping');
+        $data['shippings'] = $data['shipping_methods']; // Template expects 'shippings'
         
         $this->template->assign($data);
         $this->template->display('shipping.html');
+    }
+    
+    private function showPayment()
+    {
+        $data = $this->getCommonTemplateData();
+        
+        // Handle payment form submission
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (isset($_POST['complete_order']) || isset($_POST['pay'])) {
+                // Simulate order completion
+                // In a real implementation, this would process payment and create order
+                
+                // Clear basket after successful order
+                $this->basketManager->clearBasket();
+                
+                // Clear session data
+                unset($_SESSION['order_address']);
+                unset($_SESSION['order_shipping']);
+                
+                // Redirect to order confirmation (or back to basket with success message)
+                header('Location: /basket?order_complete=1');
+                exit;
+            }
+        }
+        
+        // Provide session order data for the template
+        $data['session_order'] = $_SESSION['order_address'] ?? [];
+        $data['session_shipping'] = $_SESSION['order_shipping'] ?? [];
+        
+        // Add payment-related data
+        $data['payment_methods'] = []; // Empty for now
+        $data['order_total'] = $this->basketManager->getTotalPrice(
+            $this->apiClient,
+            [$this, 'wrapObject']
+        );
+        
+        $this->template->assign($data);
+        $this->template->display('payment.html');
     }
     
     private function showUserSignUp()
@@ -771,5 +927,98 @@ class Hackorama
         // Render template
         $this->template->assign($data);
         $this->template->display('landing_page.html');
+    }
+    
+    private function showBlog()
+    {
+        $data = $this->getCommonTemplateData();
+        
+        // Get blog posts from API
+        try {
+            $blogPosts = $this->apiClient->getBlogPosts();
+            $data['blog_posts'] = $this->wrapObjects($blogPosts, 'BlogPost');
+        } catch (\Exception $e) {
+            $data['blog_posts'] = [];
+        }
+        
+        // Add missing template variables
+        $data['category'] = null;
+        $data['page'] = null;  
+        $data['product'] = null;
+        $data['landing_page'] = null;
+        $data['blog_post'] = null;
+        $data['pager'] = null;
+        
+        // Render template
+        $this->template->assign($data);
+        $this->template->display('blog.html');
+    }
+    
+    private function showBlogPost($id)
+    {
+        // Get blog post data from API first
+        $blogPost = null;
+        try {
+            $blogPost = $this->apiClient->getBlogPost($id);
+        } catch (\Exception $e) {
+            // Fall through to mock data
+        }
+        
+        // If no API data, use mock data
+        if (!$blogPost) {
+            $mockPosts = [
+                1 => [
+                    'blog_post_id' => 1,
+                    'title' => 'Velkommen til vores blog',
+                    'content' => 'Dette er vores første blog post. Her deler vi nyheder og interessante historier med vores kunder. Vi håber I vil følge med i vores opdateringer.',
+                    'intro' => 'En introduktion til vores blog',
+                    'author' => 'Morten',
+                    'created_at' => date('Y-m-d H:i:s', strtotime('-1 week')),
+                    'published' => true,
+                    'image' => [
+                        'url' => 'https://picsum.photos/1200/300?random=1',
+                        'alt' => 'Blog billede 1',
+                        'width' => 1200,
+                        'height' => 300
+                    ]
+                ],
+                2 => [
+                    'blog_post_id' => 2,
+                    'title' => 'Nyheder fra butikken',
+                    'content' => 'Vi har mange spændende nyheder at dele med jer. Vi har udvidet vores sortiment og tilbyder nu endnu flere produkter til gode priser.',
+                    'intro' => 'Seneste nyheder',
+                    'author' => 'Morten',
+                    'created_at' => date('Y-m-d H:i:s', strtotime('-3 days')),
+                    'published' => true,
+                    'image' => [
+                        'url' => 'https://picsum.photos/1200/300?random=2',
+                        'alt' => 'Blog billede 2',
+                        'width' => 1200,
+                        'height' => 300
+                    ]
+                ]
+            ];
+            
+            if (!isset($mockPosts[$id])) {
+                $this->show404();
+                return;
+            }
+            
+            $blogPost = $mockPosts[$id];
+        }
+        
+        $data = $this->getCommonTemplateData();
+        $data['blog_post'] = $this->wrapObject($blogPost, 'BlogPost');
+        
+        // Add missing template variables
+        $data['category'] = null;
+        $data['page'] = null;
+        $data['product'] = null;
+        $data['landing_page'] = null;
+        $data['pager'] = null;
+        
+        // Render template
+        $this->template->assign($data);
+        $this->template->display('blog_post.html');
     }
 }

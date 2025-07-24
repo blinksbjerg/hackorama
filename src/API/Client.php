@@ -272,4 +272,28 @@ class Client
             return null;
         }
     }
+    
+    public function getBlogPosts($params = [])
+    {
+        try {
+            $response = $this->request('/blog', $params);
+            // Blog posts come in a structure with 'blog_posts' array and 'paging' info
+            if (isset($response['blog_posts'])) {
+                return $response['blog_posts'];
+            }
+            return $response ?? [];
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+    
+    public function getBlogPost($id)
+    {
+        try {
+            $response = $this->request('/blog/' . $id);
+            return $response ?? null;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
 }

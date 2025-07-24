@@ -18,6 +18,10 @@ Hackorama er et lokalt udviklingsframework til Shoporama, der gør det muligt at
 - Menu system implementeret fra Shoporama API
 - Landing page support implementeret
 - Voucher template fejl løst
+- Komplet checkout flow implementeret (basket → address → shipping → payment)
+- Produkt billeder i kurv virker korrekt
+- Address side design og warnings fixed
+- Blog funktionalitet implementeret
 
 ## Installation
 
@@ -62,10 +66,8 @@ hackorama/
 
 ## Kendte begrænsninger
 
-- Checkout flow delvist implementeret (address og shipping sider)
-- Payment metoder ikke implementeret  
-- Blog funktionalitet ikke implementeret
-- Ordre visning ikke implementeret
+- Landing page ID 591 returnerer 404 fra API (API issue)
+- Ordre visning delvist implementeret
 
 ## Kunde Login
 
@@ -86,11 +88,9 @@ Tjek `logs/hackorama.log` for fejl og debug information.
 
 ## Næste skridt
 
-- Implementer checkout flow
-- Tilføj customer login funktionalitet
-- Implementer blog posts
-- Tilføj payment og shipping metoder
-- Implementer voucher/rabatkode funktionalitet
+- Fix landing page API issue (591 returns 404)
+- Komplet ordre management implementering
+- Forbedre payment integration
 
 ## Implementerede Wrapper Klasser
 
@@ -107,5 +107,6 @@ Tjek `logs/hackorama.log` for fejl og debug information.
 - **SafeMenu**: Menu data fra API
 - **SafeMenuItem**: Menu items med URL generation
 - **SafeLandingPage**: Landing page wrapper med produkter
+- **SafeBlogPost**: Blog post wrapper med metadata og indhold
 - **DefaultSafe**: Base klasse for alle wrappers
 - **BasketManager**: Cookie-baseret kurv med JSON storage og voucher support

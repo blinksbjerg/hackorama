@@ -246,9 +246,16 @@ class SafeProduct extends DefaultSafe
     
     public function getImage()
     {
+        // First check for single image field
         if (!empty($this->data['image'])) {
             return new SafeImage($this->data['image']);
         }
+        
+        // If no single image, get first image from images array
+        if (!empty($this->data['images']) && is_array($this->data['images'])) {
+            return new SafeImage($this->data['images'][0]);
+        }
+        
         return null;
     }
     
