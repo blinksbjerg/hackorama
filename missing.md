@@ -4,6 +4,12 @@ This document lists all the missing API endpoints and data fields that were disc
 
 ## Missing API Endpoints
 
+### Customers
+- `/customer` endpoint returns empty array instead of list of customers
+- Can only fetch individual customers by ID with `/customer/{id}`
+- No search/filter parameters work on customer endpoint
+- Must know customer ID in advance to fetch data
+
 ### Categories
 - Categories are missing proper IDs (currently returning 0)
 - Missing `in_menu` field to determine if category should be shown in navigation
@@ -38,16 +44,16 @@ These methods are called by templates but not available through REST API:
 - `getDefaultStockLocation()` - Default stock location
 - `getMenuByLocation($location)` - Menu structure by location
 
-### Menu System
-- Missing `/menu` endpoint to fetch menu structures
+### Menu System ✅ IMPLEMENTED
+- `/menu` endpoint now available in Shoporama API
 - Templates expect menu items with:
   - `getClass()` - CSS class for menu item
   - `getUrl()` - URL for menu item  
   - `getTitel()` - Title for menu item (note the Danish spelling)
   - `getChildren()` - Child menu items
 
-### Landing Pages
-- Missing `/landing_page` endpoint
+### Landing Pages ✅ IMPLEMENTED
+- `/landing-page` endpoint now available in Shoporama API
 - Templates expect landing pages with product listings
 - Used for campaign/promotional pages
 
@@ -87,6 +93,7 @@ Additional methods called by product templates:
 - `hasCombiProfile()` / `getCombiProfile()` - Combination profiles
 - `getProductReviewsAvg()` / `getProductReviewsCount()` - Review statistics
 - `getSimilarProducts()` - Similar/related products
+- `getPdfFiles()` - PDF files need proper structure with url, filename, and size fields
 
 ## Data Structure Issues
 
@@ -125,3 +132,21 @@ These variables are expected by templates but need to be provided:
 6. Add reviews endpoint to fetch and submit product reviews
 7. Implement proper category hierarchy with parent/child relationships
 8. Add menu system API for dynamic navigation
+
+## Implemented in Hackorama
+
+The following features have been implemented locally in Hackorama to work around missing API endpoints:
+
+1. **BasketManager** - Cookie-based basket management with JSON storage
+2. **Image Scaling** - Local image caching and scaling functionality
+3. **SafePdfFile** - Wrapper for PDF file objects with proper methods
+4. **Template Fixes** - Added isset() checks to prevent undefined array key warnings
+5. **Error Suppression** - Configured to suppress deprecation warnings
+
+All Safe* wrapper methods from Shoporama source have been implemented, including:
+- 150+ methods in SafeProduct
+- All required methods in SafeCategory, SafeWebshop, SafeImage, etc.
+- **SafeMenu** and **SafeMenuItem** - Full menu system integration
+- **SafeLandingPage** - Landing page support with products and categories
+- **Menu Navigation** - Templates now use actual Shoporama menu data via `getMenuByLocation()`
+- **Voucher Template Fix** - Fixed htmlspecialchars error in basket template

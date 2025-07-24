@@ -132,4 +132,144 @@ class Client
             return null;
         }
     }
+    
+    public function getCustomers($params = [])
+    {
+        try {
+            $response = $this->request('/customer', $params);
+            // Customers come in a structure with 'customers' array and 'paging' info
+            if (isset($response['customers'])) {
+                return $response['customers'];
+            }
+            return $response ?? [];
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+    
+    public function getCustomer($id)
+    {
+        try {
+            $response = $this->request('/customer/' . $id);
+            return $response ?? null;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+    
+    public function getShippingMethods($params = [])
+    {
+        try {
+            $response = $this->request('/shipping', $params);
+            return $response ?? [];
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+    
+    public function getShippingMethod($id)
+    {
+        try {
+            $response = $this->request('/shipping/' . $id);
+            return $response ?? null;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+    
+    public function getVouchers($params = [])
+    {
+        try {
+            $response = $this->request('/voucher', $params);
+            // Vouchers come in a structure with 'vouchers' array and 'paging' info
+            if (isset($response['vouchers'])) {
+                return $response['vouchers'];
+            }
+            return $response ?? [];
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+    
+    public function getVoucher($id)
+    {
+        try {
+            $response = $this->request('/voucher/' . $id);
+            return $response ?? null;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+    
+    public function getMenus($params = [])
+    {
+        try {
+            $response = $this->request('/menu', $params);
+            // Menus come in a structure with 'menus' array and 'paging' info
+            if (isset($response['menus'])) {
+                return $response['menus'];
+            }
+            return $response ?? [];
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+    
+    public function getMenu($id)
+    {
+        try {
+            $response = $this->request('/menu/' . $id);
+            return $response ?? null;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+    
+    public function getLandingPages($params = [])
+    {
+        try {
+            $response = $this->request('/landing-page', $params);
+            // Landing pages come in a structure with 'landing_pages' array and 'paging' info
+            if (isset($response['landing_pages'])) {
+                return $response['landing_pages'];
+            }
+            return $response ?? [];
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+    
+    public function getLandingPage($id)
+    {
+        try {
+            $response = $this->request('/landing-page/' . $id);
+            return $response ?? null;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+    
+    public function getOrders($params = [])
+    {
+        try {
+            $response = $this->request('/order', $params);
+            // Orders come in a structure with 'orders' array and 'paging' info
+            if (isset($response['orders'])) {
+                return $response['orders'];
+            }
+            return $response ?? [];
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+    
+    public function getOrder($id)
+    {
+        try {
+            $response = $this->request('/order/' . $id);
+            return $response ?? null;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
 }

@@ -9,6 +9,7 @@ class BasketManager
     private $basketPath;
     private $basketId;
     private $basket;
+    private $basketData;
     
     public function __construct($cachePath)
     {
@@ -36,9 +37,18 @@ class BasketManager
         
         if (file_exists($basketFile)) {
             $content = file_get_contents($basketFile);
-            $this->basket = json_decode($content, true) ?: [];
+            $this->basketData = json_decode($content, true) ?: [];
+            
+            // Separate products from metadata
+            $this->basket = [];
+            foreach ($this->basketData as $key => $value) {
+                if (is_numeric($key)) {
+                    $this->basket[] = $value;
+                }
+            }
         } else {
             $this->basket = [];
+            $this->basketData = [];
         }
         
         // Clean old basket files (older than 30 days)
@@ -48,7 +58,15 @@ class BasketManager
     private function saveBasket()
     {
         $basketFile = $this->basketPath . '/' . $this->basketId . '.json';
-        file_put_contents($basketFile, json_encode($this->basket, JSON_PRETTY_PRINT));
+        
+        // Rebuild basketData with numeric keys for products
+        $this->basketData = [];
+        foreach ($this->basket as $index => $item) {
+            $this->basketData[$index] = $item;
+        }
+        
+        // Save to file
+        file_put_contents($basketFile, json_encode($this->basketData, JSON_PRETTY_PRINT));
     }
     
     private function cleanOldBaskets()
@@ -165,5 +183,20 @@ class BasketManager
         }
         
         return $basketWithProducts;
+    }
+    
+    public function setVoucherCode($code)
+    {
+        if (empty($code)) {
+            unset($this->basketData['voucher_code']);
+        } else {
+            $this->basketData['voucher_code'] = $code;
+        }
+        $this->saveBasket();
+    }
+    
+    public function getVoucherCode()
+    {
+        return $this->basketData['voucher_code'] ?? '';
     }
 }

@@ -234,7 +234,27 @@ class SafeWebshop extends DefaultSafe
     
     public function getMenuByLocation($location)
     {
-        // Return empty menu for now
+        // Fetch menus from API and find one by location
+        if ($this->apiClient) {
+            try {
+                $menus = $this->apiClient->getMenus();
+                foreach ($menus as $menuData) {
+                    if (isset($menuData['location']) && $menuData['location'] === $location) {
+                        // Fetch full menu with items
+                        $fullMenu = $this->apiClient->getMenu($menuData['menu_id']);
+                        return new SafeMenu($fullMenu);
+                    }
+                    // Also check by tag since some menus might use tag field
+                    if (isset($menuData['tag']) && $menuData['tag'] === $location) {
+                        // Fetch full menu with items
+                        $fullMenu = $this->apiClient->getMenu($menuData['menu_id']);
+                        return new SafeMenu($fullMenu);
+                    }
+                }
+            } catch (\Exception $e) {
+                // Handle error
+            }
+        }
         return null;
     }
     

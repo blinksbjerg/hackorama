@@ -4,105 +4,111 @@
 Hackorama er et udviklingsframework til Shoporama, der gør det muligt at udvikle og teste Shoporama temaer lokalt.
 
 ## Status (FÆRDIG!)
+
+### Implementeret Funktionalitet
 - ✅ Grundlæggende struktur oprettet
 - ✅ API integration implementeret og testet
-- ✅ Wrapper klasser (SafeCategory, SafeProduct, etc.) implementeret
-- ✅ Smarty 4 integration fungerer med Shoporama's custom delimiters (<{ }>)
-- ✅ Alaska2 tema kopieret og konfigureret
-- ✅ Webserver kører på localhost:8080
-- ✅ Fejlfinding færdig - alle kritiske fejl rettet
-- ✅ Logger system tilføjet
+- ✅ Alle Safe* wrapper klasser fra Shoporama implementeret
+- ✅ Smarty 4 integration med Shoporama's custom delimiters (<{ }>)
+- ✅ Alaska2 tema fuldt funktionelt
 - ✅ Global.html wrapper pattern implementeret korrekt
 - ✅ Alle hovedsider fungerer: forside, produkter, kategorier, kurv, søgning
-- ✅ Billede skalering implementeret
-- ✅ Kurv funktionalitet implementeret (tilføj til kurv)
+- ✅ Billede skalering og caching implementeret
+- ✅ Cookie-baseret kurv funktionalitet med JSON storage
 - ✅ Error reporting konfigureret til at suppresse warnings
-- ✅ Test filer og dokumentation oprettet
+- ✅ SafePdfFile wrapper tilføjet for PDF håndtering
+- ✅ Alle template undefined array key warnings rettet
+- ✅ Test scripts fjernet
+- ✅ Customer og Shipping endpoints implementeret
+- ✅ Rabatkode funktionalitet implementeret
+- ✅ Customer login med password='password' konvention
 
-## Fase 1: Undersøgelse og Forberedelse
-1. **Undersøg Shoporama strukturen**
-   - Analysér `/Users/mbn/www/shoporama/webshop.php`
-   - Gennemgå klasser i `/Users/mbn/www/shoporama/admin/class/safe/*.php`
-   - Identificér centrale metoder og API struktur
+### Implementerede Wrapper Klasser
+- **SafeProduct** - 150+ metoder implementeret
+- **SafeCategory** - Fuld funktionalitet
+- **SafeImage** - Billede håndtering med skalering
+- **SafePage** - Side visning
+- **SafeWebshop** - Webshop data og indstillinger
+- **SafeProductProfile** - Produkt profiler og attributter
+- **SafePdfFile** - PDF fil håndtering
+- **SafeCustomer** - Kunde data og login
+- **SafeShipping** - Forsendelsesmetoder
+- **SafeVoucher** - Rabatkode håndtering
+- **DefaultSafe** - Base klasse for alle wrappers
+- **BasketManager** - Kurv håndtering med cookies og rabatkoder
 
-2. **Undersøg Lamplite framework**
-   - Analysér framework strukturen i `/Users/mbn/www/lamplite`
-   - Forstå hvordan det integrerer med Shoporama
+## Arkitektur
 
-3. **Undersøg REST API dokumentation**
-   - Gennemgå Swagger dokumentation på https://localshoporama.dk/index/swagger
-   - Analysér `/Users/mbn/www/shoporama/controller/rest.php`
-   - Forstå API endpoints og data strukturer
+```
+hackorama/
+├── src/
+│   ├── API/              # API Client til Shoporama REST
+│   ├── Core/             # Kerne funktionalitet
+│   │   ├── Autoloader.php
+│   │   ├── Hackorama.php
+│   │   ├── Router.php
+│   │   ├── Template.php
+│   │   ├── Logger.php
+│   │   └── BasketManager.php
+│   └── Wrappers/         # Safe wrapper klasser
+├── cache/                # JSON cache og Smarty compile
+├── themes/               # Shoporama temaer
+├── logs/                 # Error og debug logs
+└── setup.php            # Konfiguration
+```
 
-## Fase 2: Grundlæggende Implementering
-4. **Opret projekt struktur**
-   ```
-   hackorama/
-   ├── setup.php              # Konfigurationsfil
-   ├── index.php             # Hovedindgang
-   ├── src/
-   │   ├── API/              # API integration
-   │   ├── Wrappers/         # Shoporama wrapper klasser
-   │   └── Core/             # Kerne funktionalitet
-   ├── cache/                # JSON data cache
-   └── themes/               # Tema bibliotek
-   ```
+## Konfiguration
 
-5. **Implementer setup.php**
-   - API-nøgle konfiguration (default: ce10d0cfd16cd1cf98c4f47cdcad7b15)
-   - Server valg mellem www.shoporama.dk og localshoporama.dk
-   - Tema bibliotek sti
-   - Lokal URL konfiguration
+```php
+return [
+    'api' => [
+        'key' => 'ce10d0cfd16cd1cf98c4f47cdcad7b15',
+        'host' => 'https://localshoporama.dk',
+    ],
+    'theme' => [
+        'path' => __DIR__ . '/themes/Alaska2',
+    ],
+    'local_url' => 'http://localhost:8080',
+];
+```
 
-## Fase 3: API Integration
-6. **API Client**
-   - Opret klasse til at kommunikere med Shoporama REST API
-   - Implementer autentificering med API-nøgle
-   - Understøt både www.shoporama.dk og localshoporama.dk endpoints
+## Næste Skridt (Fremtidige Forbedringer)
 
-7. **Data Synkronisering**
-   - Hent produkter, kategorier, sider etc. fra API
-   - Gem data som JSON filer i cache biblioteket
-   - Implementer cache strategi for at minimere API kald
+1. **Checkout Flow**
+   - Implementer address, shipping og payment sider
+   - Tilføj ordre bekræftelse
 
-## Fase 4: Wrapper Implementation
-8. **Wrapper Klasser**
-   - Category klasse med getName() og andre metoder
-   - Product klasse med relevante metoder
-   - Customer, Order, osv. efter behov
-   - Sikre fuld kompatibilitet med Shoporama's objekt interface
+2. **Bruger Funktionalitet**
+   - Login/logout
+   - Bruger profil
+   - Ordre historik
 
-## Fase 5: Template Integration
-9. **Smarty Integration**
-   - Indlæs og konfigurer Smarty
-   - Sæt template paths
-   - Konfigurer Smarty til at matche Shoporama's setup
+3. **Blog System**
+   - Blog posts
+   - Kategorier
+   - Kommentarer
 
-10. **Data Assignment**
-    - Load JSON data og konverter til wrapper objekter
-    - Assign data til Smarty variabler
-    - Håndter template rendering
-    - Implementer Shoporama's specifikke template funktioner
+4. **Avancerede Features**
+   - Voucher/rabatkode system
+   - Ønskeliste funktionalitet
+   - Produkt anmeldelser
+   - Newsletter integration
 
-## Fase 6: Test og Finpudsning
-11. **Test Setup**
-    - Opret eksempel tema
-    - Test alle wrapper metoder
-    - Verificer at templates renderes korrekt
-    - Test med rigtige data fra API
+## Kendte Begrænsninger
 
-## Tekniske Overvejelser
-- **Caching**: JSON filer opdateres kun ved behov
-- **Performance**: Lazy loading af data hvor muligt
-- **Kompatibilitet**: Sikre fuld kompatibilitet med Shoporama's template syntax
-- **Fejlhåndtering**: Robust fejlhåndtering for manglende data eller API fejl
-- **API Endpoints**: Mulighed for at skifte mellem www.shoporama.dk og localshoporama.dk
-- **Sikkerhed**: API-nøgle skal beskyttes og ikke committes til version control
+Se `missing.md` for komplet liste over manglende API endpoints og funktionalitet i Shoporama REST API.
 
-## API Information
-- **Test API-nøgle**: ce10d0cfd16cd1cf98c4f47cdcad7b15
-- **Swagger dokumentation**: https://localshoporama.dk/index/swagger
-- **REST controller**: controller/rest.php
+## Test og Vedligeholdelse
 
-## Næste Skridt
-Start med at undersøge Shoporama og Lamplite strukturen for at forstå eksisterende implementering, efterfulgt af analyse af REST API dokumentationen.
+- Server: `php -S localhost:8080 router.php`
+- Debug: http://localhost:8080/debug.php
+- Logs: `logs/hackorama.log`
+- Cache: Slet `cache/` mappen for at tvinge ny data hentning
+
+## Tekniske Detaljer
+
+- PHP 7.4+ påkrævet
+- Smarty 4.5.3 inkluderet
+- cURL til API kommunikation
+- JSON baseret data storage
+- Cookie baseret session håndtering

@@ -15,6 +15,9 @@ Hackorama er et lokalt udviklingsframework til Shoporama, der gør det muligt at
 - Kurv funktionalitet implementeret (tilføj til kurv virker)
 - Billede skalering implementeret korrekt
 - Error reporting konfigureret til at suppresse warnings og deprecations
+- Menu system implementeret fra Shoporama API
+- Landing page support implementeret
+- Voucher template fejl løst
 
 ## Installation
 
@@ -53,20 +56,29 @@ hackorama/
 └── setup.php         # Konfiguration
 ```
 
-## Test filer
+## Debug
 
-- `/test-api.php` - Test API forbindelse
-- `/test-output.php` - Test produkt wrapper output
-- `/test-visual.php` - Visuel test med iframe
-- `/debug.php` - Debug information
+- `/debug.php` - Debug information og system status
 
 ## Kendte begrænsninger
 
-- Ikke alle Safe wrapper metoder er implementeret endnu (tilføjes efter behov)
-- Checkout flow ikke implementeret
-- Payment og shipping metoder ikke implementeret
+- Checkout flow delvist implementeret (address og shipping sider)
+- Payment metoder ikke implementeret  
 - Blog funktionalitet ikke implementeret
-- Customer login ikke implementeret
+- Ordre visning ikke implementeret
+
+## Kunde Login
+
+Da Shoporama REST API ikke returnerer passwords, er Hackorama konfigureret til at acceptere passwordet **"password"** for alle kunder. Dette gør det muligt at teste kunde login funktionalitet.
+
+**Login eksempel:**
+- Email: kunde@example.com
+- Password: password
+
+## Rabatkoder
+
+Hackorama henter rabatkoder fra Shoporama API. Aktuelle rabatkoder:
+- **10pct** - 10% rabat
 
 ## Fejlfinding
 
@@ -82,10 +94,18 @@ Tjek `logs/hackorama.log` for fejl og debug information.
 
 ## Implementerede Wrapper Klasser
 
-- **SafeProduct**: Fuld funktionalitet med 50+ metoder
+- **SafeProduct**: Fuld funktionalitet med 150+ metoder implementeret
 - **SafeCategory**: Grundlæggende metoder implementeret
 - **SafeImage**: Billede skalering implementeret
 - **SafePage**: Side visning
-- **SafeWebshop**: Webshop data og indstillinger
+- **SafeWebshop**: Webshop data og indstillinger inkl. menu support
 - **SafeProductProfile**: Produkt profiler
+- **SafePdfFile**: PDF fil håndtering
+- **SafeCustomer**: Kunde data og metoder
+- **SafeShipping**: Forsendelsesmetoder
+- **SafeVoucher**: Rabatkode håndtering
+- **SafeMenu**: Menu data fra API
+- **SafeMenuItem**: Menu items med URL generation
+- **SafeLandingPage**: Landing page wrapper med produkter
 - **DefaultSafe**: Base klasse for alle wrappers
+- **BasketManager**: Cookie-baseret kurv med JSON storage og voucher support
