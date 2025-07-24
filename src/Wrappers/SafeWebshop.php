@@ -298,7 +298,7 @@ class SafeWebshop extends DefaultSafe
             }
         }
         
-        // Return mock blog posts for testing
+        // Return mock blog posts for testing with real image format
         $mockPosts = [
             [
                 'blog_post_id' => 1,
@@ -309,7 +309,7 @@ class SafeWebshop extends DefaultSafe
                 'created_at' => date('Y-m-d H:i:s', strtotime('-1 week')),
                 'published' => true,
                 'image' => [
-                    'url' => 'https://picsum.photos/1200/300?random=1',
+                    'url' => '/cache/1/0/8/6/7/box-1200x300x90.png',
                     'alt' => 'Blog billede 1',
                     'width' => 1200,
                     'height' => 300
@@ -324,7 +324,7 @@ class SafeWebshop extends DefaultSafe
                 'created_at' => date('Y-m-d H:i:s', strtotime('-3 days')),
                 'published' => true,
                 'image' => [
-                    'url' => 'https://picsum.photos/1200/300?random=2',
+                    'url' => '/cache/1/0/8/6/6/box-1200x300x90.png',
                     'alt' => 'Blog billede 2',
                     'width' => 1200,
                     'height' => 300

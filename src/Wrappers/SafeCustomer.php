@@ -33,6 +33,11 @@ class SafeCustomer extends DefaultSafe
         return $this->data['zip'] ?? '';
     }
     
+    public function getZipcode()
+    {
+        return $this->data['zipcode'] ?? $this->getZip();
+    }
+    
     public function getCity()
     {
         return $this->data['city'] ?? '';
@@ -63,6 +68,11 @@ class SafeCustomer extends DefaultSafe
     public function getCvr()
     {
         return $this->data['cvr'] ?? '';
+    }
+    
+    public function getVatNumber()
+    {
+        return $this->data['vat_number'] ?? $this->getCvr();
     }
     
     public function getEan()
@@ -203,5 +213,45 @@ class SafeCustomer extends DefaultSafe
     {
         // Would need to implement wishlist fetching
         return [];
+    }
+    
+    public function getShippingName()
+    {
+        return $this->data['shipping_name'] ?? $this->getName();
+    }
+    
+    public function getShippingCompany()
+    {
+        return $this->data['shipping_company'] ?? $this->getCompany();
+    }
+    
+    public function getShippingAddress()
+    {
+        return $this->data['shipping_address'] ?? $this->getAddress();
+    }
+    
+    public function getShippingZipcode()
+    {
+        return $this->data['shipping_zipcode'] ?? $this->getZipcode();
+    }
+    
+    public function getShippingCity()
+    {
+        return $this->data['shipping_city'] ?? $this->getCity();
+    }
+    
+    public function getShippingCountry()
+    {
+        return $this->data['shipping_country'] ?? $this->getCountry();
+    }
+    
+    public function getCountryId()
+    {
+        return $this->data['country_id'] ?? 45; // Default to Denmark
+    }
+    
+    public function getShippingCountryId()
+    {
+        return $this->data['shipping_country_id'] ?? $this->getCountryId();
     }
 }

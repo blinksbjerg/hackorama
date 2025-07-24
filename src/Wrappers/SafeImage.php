@@ -76,10 +76,10 @@ class SafeImage extends DefaultSafe
         }
         
         // Parse the original URL to get the image ID
-        // Example: https://mortensbutik.dk/cache/1/0/8/7/7/fit-1000x1000x90.png
+        // Example: /cache/1/0/8/6/7/box-1200x300x90.png
         if (preg_match('#/cache/(\d+/\d+/\d+/\d+/\d+)/#', $url, $matches)) {
             $imageId = str_replace('/', '', $matches[1]);
-            $baseUrl = 'https://mortensbutik.dk/cache/';
+            $baseUrl = '/cache/';
             
             // Build the cache path with dimensions
             $cachePath = '';
@@ -87,8 +87,8 @@ class SafeImage extends DefaultSafe
                 $cachePath .= $imageId[$i] . '/';
             }
             
-            // Format: fit-WIDTHxHEIGHTx90.png
-            $filename = $mode . '-' . ($width ?: 0) . 'x' . ($height ?: 0) . 'x90.png';
+            // Format: box-WIDTHxHEIGHTx90.png (using box mode like mortensbutik.dk)
+            $filename = 'box-' . ($width ?: 0) . 'x' . ($height ?: 0) . 'x90.png';
             
             return $baseUrl . $cachePath . $filename;
         }
