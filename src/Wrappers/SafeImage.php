@@ -70,9 +70,9 @@ class SafeImage extends DefaultSafe
             return '';
         }
         
-        // If no dimensions specified, return original
+        // If no dimensions specified, return original via image proxy
         if (!$width && !$height) {
-            return $url;
+            return '/images.php?path=' . urlencode($url);
         }
         
         // Parse the original URL to get the image ID
@@ -89,12 +89,14 @@ class SafeImage extends DefaultSafe
             
             // Format: box-WIDTHxHEIGHTx90.png (using box mode like mortensbutik.dk)
             $filename = 'box-' . ($width ?: 0) . 'x' . ($height ?: 0) . 'x90.png';
+            $cachePath = $baseUrl . $cachePath . $filename;
             
-            return $baseUrl . $cachePath . $filename;
+            // Return via image proxy to handle auto-download
+            return '/images.php?path=' . urlencode($cachePath);
         }
         
-        // Fallback to original URL if pattern doesn't match
-        return $url;
+        // Fallback to original URL via proxy if pattern doesn't match
+        return '/images.php?path=' . urlencode($url);
     }
     
     public function getDescription()

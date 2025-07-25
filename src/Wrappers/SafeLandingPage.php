@@ -80,9 +80,10 @@ class SafeLandingPage extends DefaultSafe
     public function getProducts()
     {
         $products = [];
+        
+        // If landing page has products array, use those IDs to get real product data
         if (isset($this->data['products']) && is_array($this->data['products'])) {
             foreach ($this->data['products'] as $productData) {
-                // If we have API client, fetch full product data
                 if ($this->apiClient && isset($productData['id'])) {
                     try {
                         $fullProductData = $this->apiClient->getProduct($productData['id']);
@@ -90,33 +91,26 @@ class SafeLandingPage extends DefaultSafe
                             $products[] = new SafeProduct($fullProductData);
                         }
                     } catch (\Exception $e) {
-                        // Create mock product data when API fails
-                        error_log("API call failed for product " . $productData['id'] . ": " . $e->getMessage());
-                        $mockProductData = [
-                            'product_id' => $productData['id'],
-                            'name' => 'Test Produkt ' . $productData['id'],
-                            'price' => rand(50, 500),
-                            'description' => 'Dette er et test produkt',
-                            'images' => [
-                                [
-                                    'url' => '/cache/1/0/8/7/0/box-300x400x90.png',
-                                    'alt' => 'Produkt billede',
-                                    'width' => 300,
-                                    'height' => 400
-                                ]
-                            ],
-                            'url' => '/produkt-' . $productData['id'],
-                            'stock' => rand(0, 20),
-                            'in_stock' => true
-                        ];
-                        $products[] = new SafeProduct($mockProductData);
+                        // API failed - skip this product
                     }
-                } else {
-                    // Use basic product data from landing page
-                    $products[] = new SafeProduct($productData);
                 }
             }
         }
+        
+        // For all landing pages, if they have a product_count, get products from the cache system
+        if ($this->apiClient && $this->data['product_count'] > 0) {
+            try {
+                $productCount = $this->data['product_count'] ?? 12;
+                $allProducts = $this->apiClient->getProducts(['limit' => $productCount]);
+                
+                foreach ($allProducts as $productData) {
+                    $products[] = new SafeProduct($productData);
+                }
+            } catch (\Exception $e) {
+                // API failed - no products
+            }
+        }
+        
         return $products;
     }
     

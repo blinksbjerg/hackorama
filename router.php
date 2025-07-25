@@ -12,17 +12,28 @@ if (preg_match('/\.php$/i', $uri) && $uri !== '/index.php' && file_exists(__DIR_
     return true;
 }
 
-// Allow access to theme assets
+// Allow access to theme assets and cache images
 if (preg_match('/\.(css|js|jpg|jpeg|png|gif|svg|ico|woff|woff2|ttf|eot)$/i', $uri)) {
-    // First check if it's a theme file with full path
-    if (strpos($uri, '/themes/') === 0) {
+    // Handle cache images with automatic download
+    if (strpos($uri, '/cache/') === 0) {
+        require_once __DIR__ . '/src/Core/ImageCache.php';
+        $imageCache = new \Hackorama\Core\ImageCache();
+        
+        if ($imageCache->serveImage($uri)) {
+            return true;
+        }
+        // If image cache fails, try local file
+        $filePath = __DIR__ . '/public' . $uri;
+    }
+    // Then check if it's a theme file with full path
+    elseif (strpos($uri, '/themes/') === 0) {
         $filePath = __DIR__ . $uri;
     } else {
         // Otherwise check in theme directory
         $filePath = __DIR__ . '/themes/Alaska2' . $uri;
     }
     
-    if (file_exists($filePath)) {
+    if (isset($filePath) && file_exists($filePath)) {
         $mimeTypes = [
             'css' => 'text/css',
             'js' => 'application/javascript',

@@ -36,6 +36,28 @@ try {
     // Test API call
     $categories = $client->getCategories(['limit' => 1]);
     echo "<p>Found " . count($categories) . " categories</p>";
+    
+    // Test landing pages
+    echo "<h3>Testing Landing Pages</h3>";
+    $landingPages = $client->getLandingPages();
+    echo "<p>Found " . count($landingPages) . " landing pages</p>";
+    if (!empty($landingPages)) {
+        echo "<pre>First landing page:\n";
+        print_r($landingPages[0]);
+        echo "</pre>";
+    }
+    
+    // Test specific landing page 591
+    echo "<h3>Testing Landing Page 591</h3>";
+    $landingPage591 = $client->getLandingPage(591);
+    if ($landingPage591) {
+        echo "<p style='color:green'>Landing page 591 found!</p>";
+        echo "<pre>";
+        print_r($landingPage591);
+        echo "</pre>";
+    } else {
+        echo "<p style='color:red'>Landing page 591 not found</p>";
+    }
 } catch (Exception $e) {
     echo "<p style='color:red'>Error with API Client: " . $e->getMessage() . "</p>";
 }
