@@ -16,8 +16,9 @@ if (preg_match('/\.php$/i', $uri) && $uri !== '/index.php' && file_exists(__DIR_
 if (preg_match('/\.(css|js|jpg|jpeg|png|gif|svg|ico|woff|woff2|ttf|eot)$/i', $uri)) {
     // Handle cache images with automatic download
     if (strpos($uri, '/cache/') === 0) {
+        $config = require __DIR__ . '/setup.php';
         require_once __DIR__ . '/src/Core/ImageCache.php';
-        $imageCache = new \Hackorama\Core\ImageCache();
+        $imageCache = new \Hackorama\Core\ImageCache($config);
         
         if ($imageCache->serveImage($uri)) {
             return true;

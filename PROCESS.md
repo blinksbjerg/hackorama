@@ -51,7 +51,7 @@
 - **Search page** - Fixed template warnings
 - **User edit page** - Fixed design og functionality
 - **Blog images** - Real cache URLs instead of placeholders
-- **Image caching system** - Automatisk download fra mortensbutik.dk implementeret
+- **Image caching system** - Automatisk download fra konfigurerbar kilde implementeret
 - **ProductCache system** - Cache alle produkter fra API for bedre performance
 - **Landing page products** - Viser nu rigtige produkter fra API i stedet for mock data
 - **Image dimensions** - Korrekte dimensioner (300x400px box for landing pages, 500x500px fit for product pages)
@@ -62,7 +62,7 @@
 - **Images synlige** - Billede proxy system implementeret og fungerer
 - **Landing page 591 products** - Viser nu rigtige produkter fra API
 - **Product data flow** - ProductCache system implementeret og fungerer
-- **Image dimensions** - Korrekte dimensioner matcher nu mortensbutik.dk
+- **Image dimensions** - Korrekte dimensioner matcher produktionssite
 - **Cache directory** - Automatisk download og caching virker
 - **SafeImage getSrc** - Genererer korrekte URLs og images loader korrekt
 
@@ -102,7 +102,7 @@
 ## Current System Status
 
 ### ✅ Fully Functional Systems
-- **Image System**: Automatisk download og caching fra mortensbutik.dk
+- **Image System**: Automatisk download og caching fra konfigurerbar kilde
 - **Product Cache**: Alle produkter caches fra API med 1 times TTL  
 - **Landing Pages**: Viser rigtige produkter med korrekte billeder
 - **Template Engine**: Smarty 4 med custom delimiters fungerer perfekt

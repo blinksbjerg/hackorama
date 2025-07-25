@@ -25,6 +25,12 @@ return [
         'path' => __DIR__ . '/cache',
     ],
 
+    // Image Configuration
+    'images' => [
+        'source_url' => 'https://your-domain.dk', // Base URL for downloading images (set to your production site)
+        'cache_enabled' => true,
+    ],
+
     // Smarty Configuration
     'smarty' => [
         'version' => 4, // Smarty version (2 or 4)

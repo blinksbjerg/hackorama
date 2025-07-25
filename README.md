@@ -24,10 +24,10 @@ Hackorama er et lokalt udviklingsframework til Shoporama, der gør det muligt at
 - Blog funktionalitet implementeret
 - User-edit side implementeret
 - Search page warnings fixed
-- Automatisk billede caching fra mortensbutik.dk implementeret
+- Automatisk billede caching fra konfigurerbar kilde implementeret
 - ProductCache system for at cache alle produkter fra API
 - Landing pages viser nu rigtige produkter fra API i stedet for mock data
-- Billede dimensioner og formater matcher nu mortensbutik.dk (300x400px box mode for landing pages, 500x500px fit mode for produktsider)
+- Billede dimensioner og formater matcher produktionssite (300x400px box mode for landing pages, 500x500px fit mode for produktsider)
 
 ## Installation
 
@@ -51,6 +51,7 @@ Rediger `setup.php` for at konfigurere:
 - **Host**: Vælg mellem `www.shoporama.dk` eller `localshoporama.dk`
 - **Theme path**: Sti til dit tema (default: Alaska2)
 - **Cache**: Cache indstillinger
+- **Images source_url**: URL til din produktionsside for billede download
 
 ## Struktur
 
@@ -75,8 +76,8 @@ hackorama/
 
 Hackorama implementerer et avanceret billede caching system:
 
-- **Automatisk download**: Billeder downloades automatisk fra mortensbutik.dk når de ikke findes i cache
-- **Korrekte dimensioner**: Matcher mortensbutik.dk præcist (300x400px box mode for landing pages, 500x500px fit mode for produktsider)
+- **Automatisk download**: Billeder downloades automatisk fra den konfigurerede kilde når de ikke findes i cache
+- **Korrekte dimensioner**: Matcher produktionssite præcist (300x400px box mode for landing pages, 500x500px fit mode for produktsider)
 - **Proxy system**: `/images.php` håndterer automatisk download og caching
 - **Cache TTL**: Billeder caches permanent indtil manuelt slettet
 

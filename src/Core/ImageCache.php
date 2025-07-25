@@ -2,16 +2,19 @@
 namespace Hackorama\Core;
 
 /**
- * Image cache system that automatically downloads missing images from mortensbutik.dk
+ * Image cache system that automatically downloads missing images from configured source
  */
 class ImageCache
 {
     private $cacheDir;
-    private $sourceUrl = 'https://mortensbutik.dk';
+    private $sourceUrl;
+    private $config;
     
-    public function __construct($cacheDir = null)
+    public function __construct($config = null, $cacheDir = null)
     {
-        $this->cacheDir = $cacheDir ?: __DIR__ . '/../../public/cache';
+        $this->config = $config;
+        $this->cacheDir = $cacheDir ?: __DIR__ . '/../../cache';
+        $this->sourceUrl = $config['images']['source_url'] ?? 'https://your-domain.dk';
     }
     
     /**

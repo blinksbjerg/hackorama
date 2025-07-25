@@ -1,9 +1,10 @@
 <?php
 /**
- * Image proxy that automatically downloads missing cache images from mortensbutik.dk
+ * Image proxy that automatically downloads missing cache images from configured source
  * Usage: /images.php?path=/cache/1/0/8/7/2/box-300x400x90.png
  */
 
+$config = require __DIR__ . '/setup.php';
 require_once __DIR__ . '/src/Core/ImageCache.php';
 
 // Get requested path
@@ -23,8 +24,8 @@ if (!preg_match('#^/cache/\d+/\d+/\d+/\d+/\d+/[a-zA-Z0-9_-]+\.(png|jpg|jpeg|gif)
     exit;
 }
 
-// Initialize image cache
-$imageCache = new \Hackorama\Core\ImageCache();
+// Initialize image cache with config
+$imageCache = new \Hackorama\Core\ImageCache($config);
 
 // Serve the image (download if missing)
 if (!$imageCache->serveImage($path)) {
