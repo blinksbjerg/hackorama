@@ -22,6 +22,12 @@ Hackorama er et lokalt udviklingsframework til Shoporama, der gør det muligt at
 - Produkt billeder i kurv virker korrekt
 - Address side design og warnings fixed
 - Blog funktionalitet implementeret
+- User-edit side implementeret
+- Search page warnings fixed
+- Automatisk billede caching fra mortensbutik.dk implementeret
+- ProductCache system for at cache alle produkter fra API
+- Landing pages viser nu rigtige produkter fra API i stedet for mock data
+- Billede dimensioner og formater matcher nu mortensbutik.dk (300x400px box mode for landing pages, 500x500px fit mode for produktsider)
 
 ## Installation
 
@@ -54,9 +60,10 @@ hackorama/
 │   ├── API/          # API client til Shoporama REST API
 │   ├── Core/         # Kerne funktionalitet (router, template, logger)
 │   └── Wrappers/     # Safe wrapper klasser (SafeProduct, SafeCategory, etc.)
-├── cache/            # Cache for API data og Smarty
+├── cache/            # Cache for API data, Smarty og billeder
 ├── themes/           # Temaer (Alaska2 inkluderet)
 ├── logs/             # Log filer
+├── images.php        # Billede proxy for automatisk caching
 └── setup.php         # Konfiguration
 ```
 
@@ -64,9 +71,24 @@ hackorama/
 
 - `/debug.php` - Debug information og system status
 
+## Billede System
+
+Hackorama implementerer et avanceret billede caching system:
+
+- **Automatisk download**: Billeder downloades automatisk fra mortensbutik.dk når de ikke findes i cache
+- **Korrekte dimensioner**: Matcher mortensbutik.dk præcist (300x400px box mode for landing pages, 500x500px fit mode for produktsider)
+- **Proxy system**: `/images.php` håndterer automatisk download og caching
+- **Cache TTL**: Billeder caches permanent indtil manuelt slettet
+
+## Product Cache System
+
+- **ProductCache**: Cacher alle produkter fra API i JSON format
+- **Cache TTL**: 1 time før refresh fra API
+- **Batch fetching**: Henter produkter i batches af 100 for performance
+- **Real data**: Landing pages viser nu rigtige produkter fra API i stedet for mock data
+
 ## Kendte begrænsninger
 
-- Landing page ID 591 returnerer 404 fra API (API issue)
 - Ordre visning delvist implementeret
 
 ## Kunde Login
@@ -88,9 +110,9 @@ Tjek `logs/hackorama.log` for fejl og debug information.
 
 ## Næste skridt
 
-- Fix landing page API issue (591 returns 404)
 - Komplet ordre management implementering
 - Forbedre payment integration
+- Optimering af produktcache performance
 
 ## Implementerede Wrapper Klasser
 
@@ -106,7 +128,9 @@ Tjek `logs/hackorama.log` for fejl og debug information.
 - **SafeVoucher**: Rabatkode håndtering
 - **SafeMenu**: Menu data fra API
 - **SafeMenuItem**: Menu items med URL generation
-- **SafeLandingPage**: Landing page wrapper med produkter
+- **SafeLandingPage**: Landing page wrapper med rigtige produkter fra API
 - **SafeBlogPost**: Blog post wrapper med metadata og indhold
 - **DefaultSafe**: Base klasse for alle wrappers
 - **BasketManager**: Cookie-baseret kurv med JSON storage og voucher support
+- **ProductCache**: Avanceret cache system for alle produkter fra API
+- **ImageCache**: Automatisk billede download og caching system

@@ -147,6 +147,12 @@ All Safe* wrapper methods from Shoporama source have been implemented, including
 - 150+ methods in SafeProduct
 - All required methods in SafeCategory, SafeWebshop, SafeImage, etc.
 - **SafeMenu** and **SafeMenuItem** - Full menu system integration
-- **SafeLandingPage** - Landing page support with products and categories
+- **SafeLandingPage** - Landing page support with real products from API (no longer mock data)
 - **Menu Navigation** - Templates now use actual Shoporama menu data via `getMenuByLocation()`
 - **Voucher Template Fix** - Fixed htmlspecialchars error in basket template
+- **ProductCache System** - Advanced caching system that fetches all products from API
+- **ImageCache System** - Automatic image download and caching from mortensbutik.dk
+- **Image Dimensions** - Correct image dimensions matching mortensbutik.dk (300x400px box mode for landing pages, 500x500px fit mode for product pages)
+- **User System** - Complete user sign-in, profile editing, and order history
+- **Blog System** - Full blog functionality with real images from cache
+- **Search System** - Product search with proper template integration
