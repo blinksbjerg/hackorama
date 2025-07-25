@@ -5,6 +5,7 @@ use Hackorama\API\Client;
 use Hackorama\Core\Router;
 use Hackorama\Core\Template;
 use Hackorama\Core\Logger;
+use Hackorama\Core\ProductCache;
 
 /**
  * Main Hackorama class
@@ -17,6 +18,7 @@ class Hackorama
     private $template;
     private $logger;
     private $basketManager;
+    private $productCache;
     
     public function __construct(array $config)
     {
@@ -41,6 +43,9 @@ class Hackorama
         
         // Initialize basket manager
         $this->basketManager = new BasketManager($this->config['cache']['path']);
+        
+        // Initialize product cache
+        $this->productCache = new ProductCache($this->apiClient, $this->config['cache']['path']);
         
         // Start session for customer login
         if (session_status() == PHP_SESSION_NONE) {

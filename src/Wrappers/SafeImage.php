@@ -75,23 +75,18 @@ class SafeImage extends DefaultSafe
             return '/images.php?path=' . urlencode($url);
         }
         
-        // Parse the original URL to get the image ID
-        // Example: /cache/1/0/8/6/7/box-1200x300x90.png
-        if (preg_match('#/cache/(\d+/\d+/\d+/\d+/\d+)/#', $url, $matches)) {
-            $imageId = str_replace('/', '', $matches[1]);
-            $baseUrl = '/cache/';
+        // Parse the original URL to get the image path structure
+        // Example input: https://mortensbutik.dk/cache/1/0/8/7/9/fit-1000x1000x90.png
+        // Should become: /cache/1/0/8/7/9/box-300x400x90.png
+        if (preg_match('#/cache/(\d+/\d+/\d+/\d+/\d+)/(fit|box)-\d+x\d+x\d+\.(png|jpg|jpeg)#', $url, $matches)) {
+            $imagePath = $matches[1];
+            $extension = $matches[3];
             
-            // Build the cache path with dimensions
-            $cachePath = '';
-            for ($i = 0; $i < strlen($imageId); $i++) {
-                $cachePath .= $imageId[$i] . '/';
-            }
+            // Format: MODE-WIDTHxHEIGHTx90.EXTENSION
+            $filename = $mode . '-' . ($width ?: 0) . 'x' . ($height ?: 0) . 'x90.' . $extension;
+            $cachePath = '/cache/' . $imagePath . '/' . $filename;
             
-            // Format: box-WIDTHxHEIGHTx90.png (using box mode like mortensbutik.dk)
-            $filename = 'box-' . ($width ?: 0) . 'x' . ($height ?: 0) . 'x90.png';
-            $cachePath = $baseUrl . $cachePath . $filename;
-            
-            // Return via image proxy to handle auto-download
+            // Return via image proxy to handle auto-download from mortensbutik.dk
             return '/images.php?path=' . urlencode($cachePath);
         }
         
